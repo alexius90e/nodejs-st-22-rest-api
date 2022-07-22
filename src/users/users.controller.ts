@@ -8,7 +8,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { UserDto } from 'src/models/user-dto.interface';
+import { UserDto } from 'src/models/user.dto';
 import { User } from 'src/models/user.interface';
 import { UsersService } from './users.service';
 

@@ -22,7 +22,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  getUserById(@Param("'id'") id: string): User {
+  getUserById(@Param('id') id: string): User {
     return this.appService.getUserById(id);
   }
 

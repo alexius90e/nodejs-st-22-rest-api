@@ -26,5 +26,7 @@ module.exports = {
     'no-confusing-arrow': 'off',
     'import/prefer-default-export': 'off',
     'implicit-arrow-linebreak': 'off',
+    'function-paren-newline': 'off',
+    'operator-linebreak': 'off',
   },
 };

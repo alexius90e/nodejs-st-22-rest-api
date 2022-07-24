@@ -11,7 +11,6 @@ export class UsersService {
     if (!this.checkLoginIsFree(userDto.login)) {
       throw new HttpException('Login Is Not Free', HttpStatus.BAD_REQUEST);
     }
-
     const newUser: User = { id: uuidv4(), ...userDto };
     this.users.push(newUser);
     return newUser;
@@ -31,33 +30,31 @@ export class UsersService {
     const targetUser = this.users.find((user: User): boolean =>
       UsersService.checkUser(user, id),
     );
-
     if (!targetUser) {
       throw new HttpException('User Not Found', HttpStatus.BAD_REQUEST);
     }
-
     return targetUser;
   }
 
   public updateUser(id: string, userDto: UserDto): User {
-    const isLoginFree = this.checkLoginIsFree(userDto.login);
-    const isLoginChanged = this.getUserById(id).login === userDto.login;
+    const updatedUser: User = { id, ...userDto };
+    const isLoginFree: boolean = this.checkLoginIsFree(userDto.login);
+    const isLoginChanged: boolean =
+      this.getUserById(id).login === userDto.login;
+
     if (!isLoginFree && !isLoginChanged) {
       throw new HttpException('Login Is Not Free', HttpStatus.BAD_REQUEST);
     }
+    this.users = [...this.users.filter((user) => user.id !== id), updatedUser];
 
-    this.users = this.users.map(
-      (user: User): User =>
-        UsersService.checkUser(user, id) ? { id, ...userDto } : user,
-    );
-    return this.getUserById(id);
+    return updatedUser;
   }
 
   public deleteUser(id: string): User {
-    this.users = this.users.map(
-      (user: User): User =>
-        UsersService.checkUser(user, id) ? { ...user, isDeleted: true } : user,
-    );
+    this.users = [
+      ...this.users.filter((user) => user.id !== id),
+      { ...this.getUserById(id), isDeleted: true },
+    ];
     throw new HttpException('User Was Deleted', HttpStatus.NO_CONTENT);
   }
 

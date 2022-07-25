@@ -37,7 +37,7 @@ export class UsersService {
   }
 
   public updateUser(id: string, userDto: UserDto): User {
-    const updatedUser: User = { id, ...userDto };
+    const updatedUser: User = { ...this.getUserById(id), ...userDto };
     if (!this.checkLoginIsFree(updatedUser.login, updatedUser.id)) {
       throw new HttpException('Login Is Not Free', HttpStatus.BAD_REQUEST);
     }

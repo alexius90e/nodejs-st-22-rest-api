@@ -22,7 +22,7 @@ export class UsersService {
         (user: User): boolean =>
           user.login.includes(loginSubstring) && !user.isDeleted,
       )
-      .sort((a: User, b: User) => (a.login > b.login ? 1 : -1))
+      .sort((a: User, b: User): number => (a.login > b.login ? 1 : -1))
       .slice(0, limit);
   }
 
@@ -38,15 +38,10 @@ export class UsersService {
 
   public updateUser(id: string, userDto: UserDto): User {
     const updatedUser: User = { id, ...userDto };
-    const isLoginFree: boolean = this.checkLoginIsFree(userDto.login);
-    const isLoginChanged: boolean =
-      this.getUserById(id).login === userDto.login;
-
-    if (!isLoginFree && !isLoginChanged) {
+    if (!this.checkLoginIsFree(updatedUser.login, updatedUser.id)) {
       throw new HttpException('Login Is Not Free', HttpStatus.BAD_REQUEST);
     }
     this.users = [...this.users.filter((user) => user.id !== id), updatedUser];
-
     return updatedUser;
   }
 
@@ -62,7 +57,9 @@ export class UsersService {
     return user.id === id && !user.isDeleted;
   }
 
-  private checkLoginIsFree(login: string): boolean {
-    return !this.users.find((user) => user.login === login);
+  private checkLoginIsFree(login: string, id?: string): boolean {
+    return !this.users.find(
+      (user) => user.login === login && (id ? user.id !== id : true),
+    );
   }
 }

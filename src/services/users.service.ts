@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { UserDto } from 'src/models/user.dto';
+import { UserDto } from 'src/data-access/user.dto';
 import { User } from 'src/models/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 

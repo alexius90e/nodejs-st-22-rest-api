@@ -1,65 +1,36 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { UserDto } from 'src/models/user.dto';
-import { User } from 'src/models/user.interface';
+import { User } from 'src/models/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
+  constructor(
+    @Inject('USERS_REPOSITORY') private usersRepository: typeof User,
+  ) {}
 
-  public createUser(userDto: UserDto): User {
-    if (!this.checkLoginIsFree(userDto.login)) {
-      throw new HttpException('Login Is Not Free', HttpStatus.BAD_REQUEST);
-    }
-    const newUser: User = { id: uuidv4(), ...userDto };
-    this.users.push(newUser);
-    return newUser;
+  public async createUser(userDto: UserDto): Promise<User> {
+    return this.usersRepository.create({ id: uuidv4(), ...userDto });
   }
 
-  public getAllUsers(loginSubstring = '', limit = 10): User[] {
-    return this.users
-      .filter(
-        (user: User): boolean =>
-          user.login.includes(loginSubstring) && !user.isDeleted,
-      )
-      .sort((a: User, b: User): number => (a.login > b.login ? 1 : -1))
-      .slice(0, limit);
-  }
-
-  public getUserById(id: string): User {
-    const targetUser = this.users.find((user: User): boolean =>
-      UsersService.checkUser(user, id),
+  public async getAllUsers(substring = '', limit = 10): Promise<User[]> {
+    return this.usersRepository.findAll<User>().then((users): User[] =>
+      users
+        .filter((user: User): boolean => user.login.includes(substring))
+        .sort((a: User, b: User): number => (a.login > b.login ? 1 : -1))
+        .slice(0, limit),
     );
-    if (!targetUser) {
-      throw new HttpException('User Not Found', HttpStatus.BAD_REQUEST);
-    }
-    return targetUser;
   }
 
-  public updateUser(id: string, userDto: UserDto): User {
-    const updatedUser: User = { ...this.getUserById(id), ...userDto };
-    if (!this.checkLoginIsFree(updatedUser.login, updatedUser.id)) {
-      throw new HttpException('Login Is Not Free', HttpStatus.BAD_REQUEST);
-    }
-    this.users = [...this.users.filter((user) => user.id !== id), updatedUser];
-    return updatedUser;
+  public async getUserById(id: string): Promise<User> {
+    return this.usersRepository.findOne({ where: { id } });
   }
 
-  public deleteUser(id: string): User {
-    this.users = [
-      ...this.users.filter((user) => user.id !== id),
-      { ...this.getUserById(id), isDeleted: true },
-    ];
-    throw new HttpException('User Was Deleted', HttpStatus.NO_CONTENT);
+  public async updateUser(id: string, userDto: UserDto) {
+    return this.usersRepository.update({ id, ...userDto }, { where: { id } });
   }
 
-  static checkUser(user: User, id: string): boolean {
-    return user.id === id && !user.isDeleted;
-  }
-
-  private checkLoginIsFree(login: string, id?: string): boolean {
-    return !this.users.find(
-      (user) => user.login === login && (id ? user.id !== id : true),
-    );
+  public async deleteUser(id: string): Promise<number> {
+    return this.usersRepository.destroy({ where: { id } });
   }
 }

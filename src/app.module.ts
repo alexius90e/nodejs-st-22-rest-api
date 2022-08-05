@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './modules/users.module';
+import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { User } from './models/user.entity';
+import { User } from './users/entities/user.entity';
+import { GroupsModule } from './groups/groups.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { User } from './models/user.entity';
       },
     }),
     UsersModule,
+    GroupsModule,
   ],
 })
 export class AppModule {}

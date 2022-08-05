@@ -15,6 +15,10 @@ import { User } from './models/user.entity';
       password: process.env.POSTGRESDB_PASSWORD,
       database: process.env.POSTGRESDB_DATABASE,
       models: [User],
+      autoLoadModels: true,
+      define: {
+        timestamps: false,
+      },
       dialectOptions: {
         ssl: {
           require: true,

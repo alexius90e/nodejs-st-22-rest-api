@@ -6,7 +6,7 @@ export class User extends Model {
   @Column
   id: string;
 
-  @Column
+  @Column({ unique: true })
   login: string;
 
   @Column

@@ -8,9 +8,9 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { UserDto } from 'src/data-access/user.dto';
-import { User } from 'src/models/user.entity';
-import { UsersService } from 'src/services/users.service';
+import { UserDto } from 'src/users/dto/user.dto';
+import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('v1/users')
 export class UsersController {

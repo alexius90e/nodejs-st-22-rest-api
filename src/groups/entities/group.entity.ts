@@ -13,5 +13,3 @@ export class Group extends Model {
   @Column(JSON.stringify(Object.keys(Permission)))
   permissions: Permission[];
 }
-
-const a = Object.keys(Permission);

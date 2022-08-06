@@ -1,5 +1,5 @@
 import { IsArray, IsNotEmpty, IsString } from 'class-validator';
-import { Permission } from '../entities/permission.entity';
+import { Permission } from '../data-access/permission.enum';
 
 export class CreateGroupDto {
   @IsString()

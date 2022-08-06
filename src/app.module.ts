@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { User } from './users/entities/user.entity';
+
 import { GroupsModule } from './groups/groups.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -15,7 +15,6 @@ import { GroupsModule } from './groups/groups.module';
       username: process.env.POSTGRESDB_USER,
       password: process.env.POSTGRESDB_PASSWORD,
       database: process.env.POSTGRESDB_DATABASE,
-      models: [User],
       autoLoadModels: true,
       define: {
         timestamps: false,

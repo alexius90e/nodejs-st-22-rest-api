@@ -16,6 +16,7 @@ import { UsersModule } from './users/users.module';
       password: process.env.POSTGRESDB_PASSWORD,
       database: process.env.POSTGRESDB_DATABASE,
       autoLoadModels: true,
+      synchronize: true,
       define: {
         timestamps: false,
       },

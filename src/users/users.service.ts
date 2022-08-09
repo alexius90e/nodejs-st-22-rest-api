@@ -2,14 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { UserDto } from 'src/users/dto/user.dto';
 import { User } from 'src/users/models/user.model';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User) private usersRepository: typeof User) {}
 
   public async createUser(userDto: UserDto): Promise<User> {
-    return this.usersRepository.create({ id: uuidv4(), ...userDto });
+    return this.usersRepository.create({ ...userDto });
   }
 
   public async getAllUsers(substring = '', limit = 10): Promise<User[]> {
@@ -27,7 +26,7 @@ export class UsersService {
 
   public async updateUser(id: string, userDto: UserDto): Promise<User> {
     await this.usersRepository.update({ id, ...userDto }, { where: { id }, returning: true });
-    return this.getUserById(id)
+    return this.getUserById(id);
   }
 
   public async deleteUser(id: string): Promise<number> {

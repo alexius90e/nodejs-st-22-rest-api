@@ -35,4 +35,12 @@ export class GroupsController {
   public async removeGroup(@Param('id') id: string): Promise<number> {
     return this.groupsService.remove(id);
   }
+
+  @Post(':id')
+  public async addUsersToGroup(
+    @Param('id') groupId: string,
+    @Body() userIds: string[],
+  ): Promise<void> {
+    this.groupsService.addUsersToGroup(groupId, userIds);
+  }
 }

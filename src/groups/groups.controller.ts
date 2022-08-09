@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
@@ -41,6 +51,10 @@ export class GroupsController {
     @Param('id') groupId: string,
     @Body() userIds: string[],
   ): Promise<void> {
-    this.groupsService.addUsersToGroup(groupId, userIds);
+    try {
+      await this.groupsService.addUsersToGroup(groupId, userIds);
+    } catch {
+      throw new HttpException('BAD_REQUEST', HttpStatus.BAD_REQUEST);
+    }
   }
 }

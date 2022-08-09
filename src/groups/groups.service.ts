@@ -38,19 +38,18 @@ export class GroupsService {
   public async addUsersToGroup(groupId: string, userIds: string[]): Promise<void> {
     try {
       await this.sequelize.transaction(async (transaction) => {
-        const transactionHost = { transaction };
         const group = await this.groupsRepository.findOne({
-          ...transactionHost,
           where: { id: groupId },
+          transaction,
         });
         const users = await Promise.all(
           userIds.map((id) => this.usersRepository.findOne({ where: { id } })),
         );
 
-        await group.$add('users', users, transactionHost);
+        await group.$add('users', users, { transaction });
       });
-    } catch (err) {
-      console.log(err);
+    } catch (error: unknown) {
+      throw error;
     }
   }
 }

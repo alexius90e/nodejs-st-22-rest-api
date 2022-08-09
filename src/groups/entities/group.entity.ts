@@ -1,4 +1,4 @@
-import { Column, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 import { Permission } from '../data-access/permission.enum';
 
 @Table
@@ -10,6 +10,6 @@ export class Group extends Model {
   @Column({ unique: true })
   name: string;
 
-  @Column(JSON.stringify(Object.keys(Permission)))
+  @Column(DataType.ARRAY(DataType.ENUM(...Object.keys(Permission))))
   permissions: Permission[];
 }

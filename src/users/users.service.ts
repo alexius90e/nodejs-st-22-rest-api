@@ -25,10 +25,9 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { id } });
   }
 
-  public async updateUser(id: string, userDto: UserDto): Promise<User[]> {
-    return this.usersRepository
-      .update({ id, ...userDto }, { where: { id }, returning: true })
-      .then((res) => res[1]);
+  public async updateUser(id: string, userDto: UserDto): Promise<User> {
+    await this.usersRepository.update({ id, ...userDto }, { where: { id }, returning: true });
+    return this.getUserById(id)
   }
 
   public async deleteUser(id: string): Promise<number> {

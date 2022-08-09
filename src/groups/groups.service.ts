@@ -21,11 +21,9 @@ export class GroupsService {
     return this.groupsRepository.findOne<Group>({ where: { id } });
   }
 
-  public async update(id: string, updateGroupDto: UpdateGroupDto): Promise<Group[]> {
-    const group: Group = await this.findOne(id);
-    return this.groupsRepository
-      .update({ ...group, ...updateGroupDto }, { where: { id }, returning: true })
-      .then((res) => res[1]);
+  public async update(id: string, updateGroupDto: UpdateGroupDto): Promise<Group> {
+    await this.groupsRepository.update({ ...updateGroupDto }, { where: { id }, returning: true });
+    return this.findOne(id)
   }
 
   public async remove(id: string): Promise<number> {

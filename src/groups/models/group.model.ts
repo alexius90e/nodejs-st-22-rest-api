@@ -6,7 +6,10 @@ import { Permission } from '../data-access/permission.enum';
 @Table
 export class Group extends Model {
   @PrimaryKey
-  @Column
+  @Column({
+    type: DataType.UUIDV4,
+    defaultValue: DataType.UUIDV4,
+  })
   id: string;
 
   @Column({ unique: true })
@@ -16,5 +19,5 @@ export class Group extends Model {
   permissions: Permission[];
 
   @BelongsToMany(() => User, () => UserGroup)
-  users: User[]
+  users: User[];
 }

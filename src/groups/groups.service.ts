@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
-import { v4 as uuidv4 } from 'uuid';
-
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { Group } from './models/group.model';
@@ -17,7 +15,7 @@ export class GroupsService {
   ) {}
 
   public async create(createGroupDto: CreateGroupDto): Promise<Group> {
-    return this.groupsRepository.create({ id: uuidv4(), ...createGroupDto });
+    return this.groupsRepository.create({ ...createGroupDto });
   }
 
   public async findAll(): Promise<Group[]> {
@@ -29,7 +27,7 @@ export class GroupsService {
   }
 
   public async update(id: string, updateGroupDto: UpdateGroupDto): Promise<Group> {
-    await this.groupsRepository.update({ ...updateGroupDto }, { where: { id }, returning: true });
+    await this.groupsRepository.update({ ...updateGroupDto }, { where: { id } });
     return this.findOne(id);
   }
 
@@ -39,14 +37,17 @@ export class GroupsService {
 
   public async addUsersToGroup(groupId: string, userIds: string[]): Promise<void> {
     try {
-      await this.sequelize.transaction(async (t) => {
-        const transactionHost = { transaction: t };
-        const group = await this.groupsRepository.findOne({ ...transactionHost, where: { id: groupId } });
+      await this.sequelize.transaction(async (transaction) => {
+        const transactionHost = { transaction };
+        const group = await this.groupsRepository.findOne({
+          ...transactionHost,
+          where: { id: groupId },
+        });
         const users = await Promise.all(
           userIds.map((id) => this.usersRepository.findOne({ where: { id } })),
         );
 
-        await group.$add('users', users, transactionHost)
+        await group.$add('users', users, transactionHost);
       });
     } catch (err) {
       console.log(err);

@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 
 import { GroupsModule } from './groups/groups.module';
+import { UserGroup } from './shared/models/user-group.model';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { UsersModule } from './users/users.module';
         },
       },
     }),
+    SequelizeModule.forFeature([UserGroup]),
     UsersModule,
     GroupsModule,
   ],

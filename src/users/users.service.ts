@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { UserDto } from 'src/users/dto/user.dto';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/users/models/user.model';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -25,10 +25,9 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { id } });
   }
 
-  public async updateUser(id: string, userDto: UserDto): Promise<User[]> {
-    return this.usersRepository
-      .update({ id, ...userDto }, { where: { id }, returning: true })
-      .then((res) => res[1]);
+  public async updateUser(id: string, userDto: UserDto): Promise<User> {
+    await this.usersRepository.update({ id, ...userDto }, { where: { id }, returning: true });
+    return this.getUserById(id)
   }
 
   public async deleteUser(id: string): Promise<number> {

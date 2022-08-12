@@ -1,10 +1,13 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 
 import { GroupsModule } from './groups/groups.module';
-import { UserGroup } from './shared/models/user-group.model';
 import { UsersModule } from './users/users.module';
+import { GroupsController } from './groups/groups.controller';
+import { UsersController } from './users/users.controller';
+import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { UserGroup } from './shared/models/user-group.model';
 
 @Module({
   imports: [
@@ -18,6 +21,7 @@ import { UsersModule } from './users/users.module';
       database: process.env.POSTGRESDB_DATABASE,
       autoLoadModels: true,
       synchronize: true,
+      logging: false,
       define: {
         timestamps: false,
       },
@@ -33,4 +37,8 @@ import { UsersModule } from './users/users.module';
     GroupsModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  public configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes(UsersController, GroupsController);
+  }
+}

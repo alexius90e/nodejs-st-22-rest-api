@@ -1,11 +1,14 @@
-import { BelongsToMany, Column, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { BelongsToMany, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 import { Group } from 'src/groups/models/group.model';
 import { UserGroup } from 'src/shared/models/user-group.model';
 
 @Table
 export class User extends Model {
   @PrimaryKey
-  @Column
+  @Column({
+    type: DataType.UUIDV4,
+    defaultValue: DataType.UUIDV4,
+  })
   id: string;
 
   @Column({ unique: true })
@@ -21,5 +24,5 @@ export class User extends Model {
   isDeleted: boolean;
 
   @BelongsToMany(() => Group, () => UserGroup)
-  groups: Group[]
+  groups: Group[];
 }

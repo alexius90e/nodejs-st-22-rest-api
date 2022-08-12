@@ -1,16 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { Group } from './models/group.model';
-import { v4 as uuidv4 } from 'uuid';
+import { User } from 'src/users/models/user.model';
 
 @Injectable()
 export class GroupsService {
-  constructor(@InjectModel(Group) private groupsRepository: typeof Group) {}
+  constructor(
+    @InjectModel(Group) private groupsRepository: typeof Group,
+    @InjectModel(User) private usersRepository: typeof User,
+    private sequelize: Sequelize,
+  ) {}
 
   public async create(createGroupDto: CreateGroupDto): Promise<Group> {
-    return this.groupsRepository.create({ id: uuidv4(), ...createGroupDto });
+    return this.groupsRepository.create({ ...createGroupDto });
   }
 
   public async findAll(): Promise<Group[]> {
@@ -22,11 +27,29 @@ export class GroupsService {
   }
 
   public async update(id: string, updateGroupDto: UpdateGroupDto): Promise<Group> {
-    await this.groupsRepository.update({ ...updateGroupDto }, { where: { id }, returning: true });
-    return this.findOne(id)
+    await this.groupsRepository.update({ ...updateGroupDto }, { where: { id } });
+    return this.findOne(id);
   }
 
   public async remove(id: string): Promise<number> {
     return this.groupsRepository.destroy({ where: { id } });
+  }
+
+  public async addUsersToGroup(groupId: string, userIds: string[]): Promise<void> {
+    try {
+      await this.sequelize.transaction(async (transaction) => {
+        const group = await this.groupsRepository.findOne({
+          where: { id: groupId },
+          transaction,
+        });
+        const users = await Promise.all(
+          userIds.map((id) => this.usersRepository.findOne({ where: { id } })),
+        );
+
+        await group.$add('users', users, { transaction });
+      });
+    } catch (error: unknown) {
+      throw error;
+    }
   }
 }

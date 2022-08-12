@@ -24,5 +24,5 @@ export class User extends Model {
   isDeleted: boolean;
 
   @BelongsToMany(() => Group, () => UserGroup)
-  groups: Group[]
+  groups: Group[];
 }

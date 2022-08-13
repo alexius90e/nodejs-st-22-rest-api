@@ -4,8 +4,6 @@ import { SequelizeModule } from '@nestjs/sequelize';
 
 import { GroupsModule } from './groups/groups.module';
 import { UsersModule } from './users/users.module';
-import { GroupsController } from './groups/groups.controller';
-import { UsersController } from './users/users.controller';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { UserGroup } from './shared/models/user-group.model';
 
@@ -39,6 +37,6 @@ import { UserGroup } from './shared/models/user-group.model';
 })
 export class AppModule implements NestModule {
   public configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(LoggerMiddleware).forRoutes(UsersController, GroupsController);
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }

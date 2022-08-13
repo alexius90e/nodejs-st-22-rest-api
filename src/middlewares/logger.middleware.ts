@@ -1,5 +1,5 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
-import { NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -8,7 +8,7 @@ export class LoggerMiddleware implements NestMiddleware {
   public use(req: Request, res: Response, next: NextFunction): void {
     console.log(req, res);
 
-    this.logger.debug(`Method: ${req.method}, Path: ${req.url}`);
+    this.logger.debug(`method: ${req.method}, path: ${req.baseUrl}`);
 
     process
       .on('uncaughtException', (err, origin) => {

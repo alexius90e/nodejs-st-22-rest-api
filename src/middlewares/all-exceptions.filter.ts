@@ -76,5 +76,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           return `${controllerName}.${GroupsController.prototype.removeGroup.name}`;
       }
     }
+
+    return 'Unknown error';
   }
 }

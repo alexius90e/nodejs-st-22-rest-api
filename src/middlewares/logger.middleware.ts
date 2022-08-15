@@ -5,10 +5,10 @@ import { NextFunction, Request, Response } from 'express';
 export class LoggerMiddleware implements NestMiddleware {
   private readonly logger = new Logger();
 
-  public use(req: Request, res: Response, next: NextFunction): void {
-    console.log(req, res);
+  public use(request: Request, response: Response, next: NextFunction): void {
+    console.log(request, response);
 
-    this.logger.debug(`method: ${req.method}, path: ${req.baseUrl}`);
+    this.logger.debug(`method: ${request.method}, path: ${request.baseUrl}`);
 
     process
       .on('uncaughtException', (err, origin) => {

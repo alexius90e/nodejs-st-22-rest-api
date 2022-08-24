@@ -6,6 +6,7 @@ import { GroupsModule } from './groups/groups.module';
 import { UsersModule } from './users/users.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { UserGroup } from './shared/models/user-group.model';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UserGroup } from './shared/models/user-group.model';
     SequelizeModule.forFeature([UserGroup]),
     UsersModule,
     GroupsModule,
+    AuthModule,
   ],
 })
 export class AppModule implements NestModule {

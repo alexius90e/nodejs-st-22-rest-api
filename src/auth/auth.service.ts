@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/models/user.model';
 import { UsersService } from 'src/users/users.service';
@@ -8,6 +8,8 @@ import { AccessToken } from './interfaces/access-token.interface';
 export class AuthService {
   constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
+  private readonly logger = new Logger();
+
   public async validateUser(login: string, password: string): Promise<User> {
     const user = await this.usersService.getUserByLogin(login);
     return user && user.password === password ? user : null;
@@ -15,6 +17,7 @@ export class AuthService {
 
   public async login(user: User): Promise<AccessToken> {
     const payload = { sub: user.id };
+    this.logger.debug(`Generated JWT token with payload ${JSON.stringify(payload)}`);
     return { access_token: this.jwtService.sign(payload) };
   }
 }
